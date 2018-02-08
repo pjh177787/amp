@@ -24,13 +24,15 @@ def find_path_dfs(maze, start, goal):
     stack = deque([("", start)])
     visited = set()
     graph = maze2graph(maze)
+    expanded = 0
     while stack:
         path, current = stack.pop()
         if current == goal:
-            return path
+            return path, expanded
         if current in visited:
             continue
         visited.add(current)
+        expanded += 1
         for direction, neighbour in graph[current]:
             stack.append((path + direction, neighbour))
     return "NO WAY!"
@@ -40,13 +42,15 @@ def find_path_bfs(maze, start, goal):
     queue = deque([("", start)])
     visited = set()
     graph = maze2graph(maze)
+    expanded = 0
     while queue:
         path, current = queue.popleft()
         if current == goal:
-            return path
+            return path, expanded
         if current in visited:
             continue
         visited.add(current)
+        expanded += 1
         for direction, neighbour in graph[current]:
             queue.append((path + direction, neighbour))
     return "NO WAY!"
@@ -56,18 +60,40 @@ def heuristic(cell, goal):
     return abs(cell[0] - goal[0]) + abs(cell[1] - goal[1])
 
 
+def find_path_gbfs(maze, start, goal):
+    pr_queue = []
+    heappush(pr_queue, (heuristic(start, goal), "", start))
+    visited = set()
+    graph = maze2graph(maze)
+    expanded = 0
+    while pr_queue:
+        _, path, current = heappop(pr_queue)
+        if current == goal:
+            return path, expanded
+        if current in visited:
+            continue
+        visited.add(current)
+        expanded += 1
+        for direction, neighbour in graph[current]:
+            heappush(pr_queue, (heuristic(neighbour, goal), 
+                                path + direction, neighbour))
+    return "NO WAY!"
+
+
 def find_path_astar(maze, start, goal):
     pr_queue = []
     heappush(pr_queue, (0 + heuristic(start, goal), 0, "", start))
     visited = set()
     graph = maze2graph(maze)
+    expanded = 0
     while pr_queue:
         _, cost, path, current = heappop(pr_queue)
         if current == goal:
-            return path
+            return path, expanded
         if current in visited:
             continue
         visited.add(current)
+        expanded += 1
         for direction, neighbour in graph[current]:
             heappush(pr_queue, (cost + heuristic(neighbour, goal), cost + 1,
                                 path + direction, neighbour))
