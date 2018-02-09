@@ -200,7 +200,7 @@ def find_path_astar(maze, start, goal):
     return "NO WAY!"
 
 
-def draw_path(maze_map, path, start, goal):
+def draw_path(maze_map, path, start):
     row, col = start
     # print(row, col)
     maze_sol = maze_map.copy()
@@ -217,8 +217,6 @@ def draw_path(maze_map, path, start, goal):
             print('Bad path')
         else:
             maze_sol[row][col] = '.'
-    if not (row, col) == goal:
-        print('Bad path')
     return maze_sol
 
 
@@ -226,9 +224,11 @@ def parse_file(fname):
     maze_file = open(fname, 'r')
     maze_map = []
     start = ()
-    goal_arr = []
+    goal_dict = {}
+    index_dict = {}
     row = 0
     col = 0
+    count = 0
     for line in maze_file:
         char_list = []
         col = 0
@@ -238,21 +238,20 @@ def parse_file(fname):
             char_list.append(char)
             if char == 'P':
                 start = (row, col)
-                goal_arr.append(start)
+                goal_dict[count] = start
+                index_dict[start] = count
+                count += 1
             elif char == '.':
                 goal = (row, col)
-                goal_arr.append(goal)
+                goal_dict[count] = goal
+                index_dict[goal] = count
+                count += 1
             col += 1
         row += 1
         maze_map.append(char_list)
     maze_file.close()
-    
-    dist_dict = {}
-    for i in range(len(goal_arr) - 1):
-        for j in range(i + 1, len(goal_arr)):
-            dist = get_manhattan(goal_arr[i], goal_arr[j])
-            dist_dict[(goal_arr[i], goal_arr[j])] = dist
-    return maze_map, start, goal_arr, dist_dict
+
+    return maze_map, start, goal_dict, index_dict
 
 
 def write_sol_to_file(fname, maze_sol):
