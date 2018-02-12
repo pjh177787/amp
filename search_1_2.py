@@ -110,6 +110,9 @@ def maze2graph(maze):
     return graph
 
 
+
+        
+
 def find_path_dfs(maze, start, goal):
     stack = deque([("", start)])
     visited = set()
@@ -201,7 +204,12 @@ def find_path_astar(maze, start, goal):
 
 
 def draw_path(maze_map, path, start):
+    labels = [  '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a'
+              , 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l'
+              , 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w'
+              , 'x', 'y', 'z']
     row, col = start
+    count = 0
     # print(row, col)
     maze_sol = maze_map.copy()
     for direction in path:
@@ -215,7 +223,22 @@ def draw_path(maze_map, path, start):
             row -= 1
         if maze_sol[row][col] == '%':
             print('Bad path')
-        else:
+        elif maze_sol[row][col] == '.':
+            maze_sol[row][col] = labels[count]
+            count += 1
+    row, col = start
+    for direction in path:
+        if direction == 'E':
+            col += 1
+        elif direction == 'S':
+            row += 1
+        elif direction == 'W':
+            col -= 1
+        elif direction == 'N':
+            row -= 1
+        if maze_sol[row][col] == '%':
+            print('Bad path')
+        elif maze_sol[row][col] == ' ':
             maze_sol[row][col] = '.'
     return maze_sol
 
@@ -262,3 +285,16 @@ def write_sol_to_file(fname, maze_sol):
         maze_file.write('\n')
     maze_file.close()
     
+def perm(k):
+    k = tuple(k)
+    lk = len(k)
+    if lk <= 1:
+        yield k
+    else:
+        for i in range(lk):
+            s = k[:i] + k[i+1:]
+            t = (k[i],)
+            for x in perm(s):
+                yield t + x
+                
+                
