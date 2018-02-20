@@ -56,13 +56,14 @@ def find_path_bfs(maze, start, goal):
     return "NO WAY!"
 
 
-def heuristic(cell, goal):
-    return abs(cell[0] - goal[0]) + abs(cell[1] - goal[1])
+def heuristic(start, cell, goal):
+    manhattan = abs(cell[0] - goal[0]) + abs(cell[1] - goal[1])
+    return manhattan
 
 
 def find_path_gbfs(maze, start, goal):
     pr_queue = []
-    heappush(pr_queue, (heuristic(start, goal), "", start))
+    heappush(pr_queue, (heuristic(start, start, goal), "", start))
     visited = set()
     graph = maze2graph(maze)
     expanded = 0
@@ -75,14 +76,14 @@ def find_path_gbfs(maze, start, goal):
         visited.add(current)
         expanded += 1
         for direction, neighbour in graph[current]:
-            heappush(pr_queue, (heuristic(neighbour, goal), 
+            heappush(pr_queue, (heuristic(start, neighbour, goal), 
                                 path + direction, neighbour))
     return "NO WAY!"
 
 
 def find_path_astar(maze, start, goal):
     pr_queue = []
-    heappush(pr_queue, (0 + heuristic(start, goal), 0, "", start))
+    heappush(pr_queue, (0 + heuristic(start, start, goal), 0, "", start))
     visited = set()
     graph = maze2graph(maze)
     expanded = 0
@@ -95,7 +96,7 @@ def find_path_astar(maze, start, goal):
         visited.add(current)
         expanded += 1
         for direction, neighbour in graph[current]:
-            heappush(pr_queue, (cost + heuristic(neighbour, goal), cost + 1,
+            heappush(pr_queue, (cost + heuristic(start, neighbour, goal), cost + 1,
                                 path + direction, neighbour))
     return "NO WAY!"
 
