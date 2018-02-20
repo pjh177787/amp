@@ -1,6 +1,7 @@
 # This is a class implemented for queue data structure
 
 from collections import deque, defaultdict
+from copy import deepcopy
 from heapq import heappop, heappush
 
 
@@ -297,4 +298,6 @@ def perm(k):
             for x in perm(s):
                 yield t + x
                 
+                
+
                 
