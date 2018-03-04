@@ -63,3 +63,23 @@ class Factory_Map:
             if elem[1] == fact_1:
                 return elem[0]
         return 99999
+
+    
+def find_path_astar(graph, frontier):
+    pr_queue = []
+    heappush(pr_queue, (0 + heuristic(start, start, goal), 0, "", start))
+    visited = set()
+    graph = maze2graph(maze)
+    expanded = 0
+    while pr_queue:
+        _, cost, path, current = heappop(pr_queue)
+        if current == goal:
+            return path, expanded
+        if current in visited:
+            continue
+        visited.add(current)
+        expanded += 1
+        for direction, neighbour in graph[current]:
+            heappush(pr_queue, (cost + heuristic(start, neighbour, goal), cost + 1,
+                                path + direction, neighbour))
+    return "NO WAY!"
