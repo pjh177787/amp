@@ -4,7 +4,7 @@ from copy import deepcopy
 from heapq import heappop, heappush
 
 class Q:
-    def __init__(self, arr):
+    def __init__(self, arr=[]):
         self.q = arr
 
     def pop(self):
@@ -29,17 +29,19 @@ class Q:
 
 class Factory_Map:
     def __init__(self):
-        pass
-
-    def get_factorys(self):
-        return ['A', 'B', 'C', 'D', 'E']
-    def get_graph(self):
-        return {
+        self.graph = {
             'A':[(277, 'E'), (673, 'C'), (1064, 'B'), (1401, 'D')],  
             'B':[(337, 'E'), (958, 'C'), (1064, 'A'), (1934, 'D')], 
             'C':[(399, 'E'), (673, 'A'), (958, 'B'), (1001, 'D')], 
             'D':[(387, 'E'), (1001, 'C'), (1401, 'A'), (1934, 'B')], 
             'E':[(277, 'A'), (337, 'B'), (387, 'D'), (399, 'C'), ]}
+        self.factories = ['A', 'B', 'C', 'D', 'E']
+        pass
+
+    def get_factorys(self):
+        return self.factories
+    def get_graph(self):
+        return self.graph
     def get_widget1(self):
         widget = Q(['A', 'E', 'D', 'C', 'A'])
         return widget   
@@ -55,7 +57,9 @@ class Factory_Map:
     def get_widget5(self):
         widget = Q(['B', 'E', 'C', 'B', 'D'])
         return widget   
-
+    
+    def get_len(self, widget):
+        return widget.size()
 
     def get_dist (self, fact_0, fact_1):
         graph = self.get_graph()
@@ -63,23 +67,16 @@ class Factory_Map:
             if elem[1] == fact_1:
                 return elem[0]
         return 99999
-
     
-def find_path_astar(graph, frontier):
-    pr_queue = []
-    heappush(pr_queue, (0 + heuristic(start, start, goal), 0, "", start))
-    visited = set()
-    graph = maze2graph(maze)
-    expanded = 0
-    while pr_queue:
-        _, cost, path, current = heappop(pr_queue)
-        if current == goal:
-            return path, expanded
-        if current in visited:
-            continue
-        visited.add(current)
-        expanded += 1
-        for direction, neighbour in graph[current]:
-            heappush(pr_queue, (cost + heuristic(start, neighbour, goal), cost + 1,
-                                path + direction, neighbour))
-    return "NO WAY!"
+    def get_frontier(self, widgets):
+        frontier = {}
+        for widget in widgets:
+            factory = widget.peek()
+            if not factory in frontier:
+                frontier[factory] = 1
+            else:
+                frontier[factory] += 1
+        return frontier
+                
+            
+    
