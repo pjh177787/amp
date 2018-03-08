@@ -61,22 +61,31 @@ class Factory_Map:
     def get_len(self, widget):
         return widget.size()
 
-    def get_dist (self, fact_0, fact_1):
+    def get_dist(self, start, goal):
+        pr_queue = []
         graph = self.get_graph()
-        for elem in graph[fact_0]:
-            if elem[1] == fact_1:
-                return elem[0]
-        return 99999
+        heappush(pr_queue, (0, '', start))
+        visited = set()
+        while pr_queue:
+            cost, path, current = heappop(pr_queue)
+            if current == goal:
+                return cost, path
+            if current in visited:
+                continue
+            visited.add(current)
+            for distance, neighbour in graph[current]:
+                heappush(pr_queue, (cost + distance, path + neighbour, neighbour))
+        return -1
     
     def get_frontier(self, widgets):
         frontier = {}
         for widget in widgets:
-            factory = widget.peek()
-            if not factory in frontier:
-                frontier[factory] = 1
-            else:
-                frontier[factory] += 1
+            if not widget.size() == 0:
+                factory = widget.peek()
+                if not factory in frontier:
+                    frontier[factory] = 1
+                else:
+                    frontier[factory] += 1
         return frontier
-                
-            
+        
     
