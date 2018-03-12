@@ -77,13 +77,13 @@ class Board:
     
     def find_winning_block(self, player):
         row_wb_list = sorted(self.row_has_winning_block(player), reverse = True)
-        # print(row_wb_list)
+        print(player, 'row:', row_wb_list)
         col_wb_list = sorted(self.col_has_winning_block(player), reverse = True)
-        # print(col_wb_list)
+        print(player, 'col:', col_wb_list)
         l2r_wb_list = sorted(self.l2r_has_winning_block(player), reverse = True)
-        # print(l2r_wb_list)
+        print(player, 'l2r:', l2r_wb_list)
         r2l_wb_list = sorted(self.r2l_has_winning_block(player), reverse = True)
-        # print(r2l_wb_list)
+        print(player, 'r2l:', r2l_wb_list)
         
         max_wb_list = max(row_wb_list[0][0], col_wb_list[0][0], l2r_wb_list[0][0], r2l_wb_list[0][0])
         

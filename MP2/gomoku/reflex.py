@@ -26,13 +26,17 @@ class Reflex:
         
         row, col = self.bd.check_has_four(self.player)
         if self.bd.is_movable(row, col):
+            print('found winning four')
             return row, col, alfa
         row, col = self.bd.check_has_four(self.opponent)
         if self.bd.is_movable(row, col):
+            print('found losing four')
             return row, col, alfa
-        row, col = self.bd.check_has_three(self.player)
+        row, col = self.bd.check_has_three(self.opponent)
         if self.bd.is_movable(row, col):
+            print('found losing three')
             return row, col, alfa
+        
         winning_moves = self.bd.find_winning_block(self.player)
         
         if len(winning_moves) == 0:

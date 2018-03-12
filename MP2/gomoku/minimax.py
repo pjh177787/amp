@@ -40,12 +40,12 @@ class Minimax:
         row, col = self.bd.check_has_four(self.opponent)
         if self.bd.is_movable(row, col):
             return row, col, alfa
-        row, col = self.bd.check_has_three(self.player)
+        row, col = self.bd.check_has_three(self.opponent)
         if self.bd.is_movable(row, col):
             return row, col, alfa
         
         new_bd = deepcopy(self.bd)
-        next_move = self.minimax(2, new_bd)
+        next_move, _ = self.minimax(2, new_bd, alfa)
         
         if next_move == (-1, -1):
             print('WHAT')
@@ -54,7 +54,14 @@ class Minimax:
         row, col = next_move
         return row, col, alfa
     
-    def minimax(self, depth, board):
+    def minimax(self, depth, board, alfa):
+        moves = board.find_winning_block(self.player)
+        if len(moves) == 0:
+            if board.check_winner() == self.player:
+                return (-1, -1), 9999
+            else:
+                return (-1, -1), 0
+        print('Player:', self.player, 'Depth:', depth, 'with', moves)
         if depth == 0:
             result_score = 0
             result_move = (-1, -1)
@@ -62,22 +69,21 @@ class Minimax:
                 new_bd = deepcopy(self.bd)
                 row, col = next_move
                 new_bd.make_move(row, col, alfa)
-                score = evaluate(new_bd)
+                score = self.evaluate(new_bd)
                 if (score > result_score):
                     result_score = score
                     result_move = next_move
             return result_move, result_score
         
-        moves = self.bd.find_winning_block(self.player)
         if depth%2 == 0:
             # max node
             result_score = 0
             result_move = (-1, -1)
             for next_move in moves:
-                new_bd = deepcopy(self.bd)
+                new_bd = deepcopy(board)
                 row, col = next_move
                 new_bd.make_move(row, col, alfa)
-                _, score = minimax(depth - 1, new_bd)
+                _, score = self.minimax(depth - 1, new_bd, alfa)
                 if (score > result_score):
                     result_score = score
                     result_move = next_move
@@ -86,10 +92,10 @@ class Minimax:
             result_score = 9999
             result_move = (-1, -1)
             for next_move in moves:
-                new_bd = deepcopy(self.bd)
+                new_bd = deepcopy(board)
                 row, col = next_move
                 new_bd.make_move(row, col, alfa)
-                _, score = minimax(depth - 1, new_bd)
+                _, score = self.minimax(depth - 1, new_bd, alfa)
                 if (score < result_score):
                     result_score = score
                     result_move = next_move
