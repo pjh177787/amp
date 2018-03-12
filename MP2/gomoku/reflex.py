@@ -23,76 +23,15 @@ class Reflex:
         alfa = self.all_alfa[self.move]
         self.move += 1
         
-        row, col = board.row_has_four(self.player)
-        if (row, col) == (-1, -1):
-            row, col = board.col_has_four(self.player)
-            if (row, col) == (-1, -1):
-                row, col = board.l2r_has_four(self.player)
-                if (row, col) == (-1, -1):
-                    row, col = board.r2l_has_four(self.player)
-                    if (row, col) == (-1, -1):
-                        pass
-                    elif board.is_movable(row - 1, col + 1):
-                        return row - 1, col + 1, alfa
-                    elif board.is_movable(row + 4, col - 4):
-                        return row + 4, col - 4, alfa
-                elif board.is_movable(row - 1, col - 1):
-                    return row - 1, col - 1, alfa
-                elif board.is_movable(row + 4, col + 4):
-                    return row + 4, col + 4, alfa
-            elif board.is_movable(row - 1, col):
-                return row - 1, col, alfa
-            elif board.is_movable(row + 4, col):
-                return row + 4, col, alfa
-        elif board.is_movable(row, col - 1):
-            return row, col - 1, alfa
-        elif board.is_movable(row, col + 4):
-            return row, col + 4, alfa
-        
-        row, col = board.row_has_four(self.opponent)
-        if (row, col) == (-1, -1):
-            row, col = board.col_has_four(self.opponent)
-            if (row, col) == (-1, -1):
-                row, col = board.l2r_has_four(self.opponent)
-                if (row, col) == (-1, -1):
-                    row, col = board.r2l_has_four(self.opponent)
-                    if (row, col) == (-1, -1):
-                        pass
-                    elif board.is_movable(row - 1, col + 1):
-                        return row - 1, col + 1, alfa
-                    elif board.is_movable(row + 4, col - 4):
-                        return row + 4, col - 4, alfa
-                elif board.is_movable(row - 1, col - 1):
-                    return row - 1, col - 1, alfa
-                elif board.is_movable(row + 4, col + 4):
-                    return row + 4, col + 4, alfa
-            elif board.is_movable(row - 1, col):
-                return row - 1, col, alfa
-            elif board.is_movable(row + 4, col):
-                return row + 4, col, alfa
-        elif board.is_movable(row, col - 1):
-            return row, col - 1, alfa
-        elif board.is_movable(row, col + 4):
-            return row, col + 4, alfa
-        
-        row, col = board.row_has_three(self.player)
-        if (row, col) == (-1, -1):
-            row, col = board.col_has_three(self.player)
-            if (row, col) == (-1, -1):
-                row, col = board.l2r_has_three(self.player)
-                if (row, col) == (-1, -1):
-                    row, col = board.r2l_has_three(self.player)
-                    if (row, col) == (-1, -1):
-                        pass
-                    elif board.is_movable(row + 3, col - 3) and board.is_movable(row - 1, col + 1):
-                        return row - 1, col + 1, alfa
-                elif board.is_movable(row - 1, col - 1) and board.is_movable(row + 3, col + 3):
-                    return row - 1, col - 1, alfa
-            elif board.is_movable(row + 3, col) and board.is_movable(row - 1, col):
-                return row -1 , col, alfa
-        elif board.is_movable(row, col - 1) and board.is_movable(row, col + 3):
-            return row, col - 1, alfa
-        
+        row, col = board.check_has_four(self.player)
+        if board.is_movable(row, col):
+            return row, col, alfa
+        row, col = board.check_has_four(self.opponent)
+        if board.is_movable(row, col):
+            return row, col, alfa
+        row, col = board.check_has_three(self.player)
+        if board.is_movable(row, col):
+            return row, col, alfa
         row, col = board.find_winning_block(self.player)
         return row, col, alfa
             
