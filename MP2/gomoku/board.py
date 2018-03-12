@@ -1,4 +1,5 @@
 import numpy as np
+import random
 
 class Board:
     def __init__(self):
@@ -28,6 +29,13 @@ class Board:
                 if cell == '.':
                     spaces.append((row, cell))
         return spaces
+    
+    def pick_random(self):
+        movable = self.get_space()
+        if len(movable) == 0:
+            return -1, -1
+        else:
+            return random.choice(movable)
     
     def is_movable(self, row, col):
         if row < 0 or row > 6 or col < 0 or col > 6:
@@ -145,8 +153,8 @@ class Board:
             return -1, -1
         else:
             moves = sorted(moves, key=lambda tup:(tup[1], tup[0]))
-            print(moves)
-            return moves[0]
+            # print(moves)
+            return moves
                                       
          
     def check_winner(self):
@@ -167,6 +175,89 @@ class Board:
         if not self.r2l_has_five('blue') == (-1, -1):
             return 'blue'
         return 'not yet'
+    
+    def check_one_away(self, player):
+        row_wb_list = self.row_has_winning_block(player)
+        # print(row_wb_list)
+        col_wb_list = self.col_has_winning_block(player)
+        # print(col_wb_list)
+        l2r_wb_list = self.l2r_has_winning_block(player)
+        # print(l2r_wb_list)
+        r2l_wb_list = self.r2l_has_winning_block(player)
+        # print(r2l_wb_list)
+        
+        count = 0
+        for wb in row_wb_list:
+            if wb[0] == 4:
+                count += 1
+            else:
+                break
+        for wb in col_wb_list:
+            if wb[0] == 4:
+                count += 1
+            else:
+                break
+        for wb in l2r_wb_list:
+            if wb[0] == 4:
+                count += 1
+            else:
+                break
+        for wb in r2l_wb_list:
+            if wb[0] == 4:
+                count += 1
+            else:
+                break
+        return count
+    
+    def check_two_away(self, player):
+        row_wb_list = self.row_has_winning_block(player)
+        # print(row_wb_list)
+        col_wb_list = self.col_has_winning_block(player)
+        # print(col_wb_list)
+        l2r_wb_list = self.l2r_has_winning_block(player)
+        # print(l2r_wb_list)
+        r2l_wb_list = self.r2l_has_winning_block(player)
+        # print(r2l_wb_list)
+        
+        count = 0
+        for wb in row_wb_list:
+            if wb[0] == 3:
+                count += 1
+        for wb in col_wb_list:
+            if wb[0] == 3:
+                count += 1
+        for wb in l2r_wb_list:
+            if wb[0] == 3:
+                count += 1
+        for wb in r2l_wb_list:
+            if wb[0] == 3:
+                count += 1
+        return count
+    
+    def check_three_away(self, player):
+        row_wb_list = self.row_has_winning_block(player)
+        # print(row_wb_list)
+        col_wb_list = self.col_has_winning_block(player)
+        # print(col_wb_list)
+        l2r_wb_list = self.l2r_has_winning_block(player)
+        # print(l2r_wb_list)
+        r2l_wb_list = self.r2l_has_winning_block(player)
+        # print(r2l_wb_list)
+        
+        count = 0
+        for wb in row_wb_list:
+            if wb[0] == 2:
+                count += 1
+        for wb in col_wb_list:
+            if wb[0] == 2:
+                count += 1
+        for wb in l2r_wb_list:
+            if wb[0] == 2:
+                count += 1
+        for wb in r2l_wb_list:
+            if wb[0] == 2:
+                count += 1
+        return count
     
     def check_has_four(self, player):
         starts = self.l2r_has_four(player)
