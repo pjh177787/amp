@@ -12,11 +12,14 @@ class Board:
                       ['.', '.', '.', '.', '.', '.', '.']])
     
     def prt(self):
-        for row in self.board:
-            prt_str = ''
-            for cell in row:
+        row_c = 0
+        for i in range(len(self.board)-1, -1, -1):
+            prt_str = str(i) + '   '
+            for cell in self.board[i]:
                 prt_str += cell + ' '
             print(prt_str)
+        print()
+        print('    0 1 2 3 4 5 6')
         print()
         
     def get_board(self):
@@ -24,10 +27,15 @@ class Board:
         
     def get_space(self):
         spaces = []
+        row_c = 0
+        
         for row in self.board:
+            col_c = 0
             for cell in row:
                 if cell == '.':
-                    spaces.append((row, cell))
+                    spaces.append((row_c, col_c))
+                col_c += 1
+            row_c += 1
         return spaces
     
     def pick_random(self):
@@ -35,7 +43,7 @@ class Board:
         if len(movable) == 0:
             return -1, -1
         else:
-            return random.choice(movable)
+            return movable[0]
     
     def is_movable(self, row, col):
         if row < 0 or row > 6 or col < 0 or col > 6:
@@ -77,84 +85,125 @@ class Board:
     
     def find_winning_block(self, player):
         row_wb_list = sorted(self.row_has_winning_block(player), reverse = True)
-        print(player, 'row:', row_wb_list)
+        # print(player, 'row:', row_wb_list)
         col_wb_list = sorted(self.col_has_winning_block(player), reverse = True)
-        print(player, 'col:', col_wb_list)
+        # print(player, 'col:', col_wb_list)
         l2r_wb_list = sorted(self.l2r_has_winning_block(player), reverse = True)
-        print(player, 'l2r:', l2r_wb_list)
+        # print(player, 'l2r:', l2r_wb_list)
         r2l_wb_list = sorted(self.r2l_has_winning_block(player), reverse = True)
-        print(player, 'r2l:', r2l_wb_list)
+        # print(player, 'r2l:', r2l_wb_list)
         
-        max_wb_list = max(row_wb_list[0][0], col_wb_list[0][0], l2r_wb_list[0][0], r2l_wb_list[0][0])
+        if not len(row_wb_list) == 0:
+            max_row_wb = row_wb_list[0][0]
+        else:
+            max_row_wb = 0
+        if not len(col_wb_list) == 0:
+            max_col_wb = col_wb_list[0][0]
+        else:
+            max_col_wb = 0
+        if not len(l2r_wb_list) == 0:
+            max_l2r_wb = l2r_wb_list[0][0]
+        else:
+            max_l2r_wb = 0
+        if not len(r2l_wb_list) == 0:
+            max_r2l_wb = r2l_wb_list[0][0]
+        else:
+            max_r2l_wb = 0
+        
+        max_wb_list = max(max_row_wb, max_col_wb, max_l2r_wb, max_r2l_wb)
         
         moves = []
-        
+        sub_moves = []
         for wb in l2r_wb_list:
+            row_s, col_s = wb[1]
+            row_t, col_t = wb[2]
             if wb[0] == max_wb_list:
-                row_s, col_s = wb[1]
-                row_t, col_t = wb[2]
                 if self.is_movable(row_s - 1, col_s - 1) and self.is_friend(row_s, col_s, player):
                     moves.append((row_s - 1, col_s - 1))
-                    break
-                else:
-                    for i in range(5):
-                        if self.is_movable(row_s + i, col_s + i) and (self.is_friend(row_s + i + 1, col_s + i + 1, player) or self.is_friend(row_s + i - 1, col_s + i - 1, player)):
+                    sub_moves.append((row_s - 1, col_s - 1))
+                for i in range(5):
+                    if self.is_movable(row_s + i, col_s + i):
+                        if self.is_friend(row_s + i + 1, col_s + i + 1, player) or self.is_friend(row_s + i - 1, col_s + i - 1, player):
                             moves.append((row_s + i, col_s + i))
-                            break
+                        sub_moves.append((row_s + i, col_s + i))
+            elif not wb[0] == 0:
+                # for i in range(5):
+                #     if self.is_movable(row_s + i, col_s + i):
+                #         sub_moves.append((row_s + i, col_s + i))
+                pass
             else:
                 break
                     
         for wb in row_wb_list:
+            row_s, col_s = wb[1]
+            row_t, col_t = wb[2]
             if wb[0] == max_wb_list:
-                row_s, col_s = wb[1]
-                row_t, col_t = wb[2]
                 if self.is_movable(row_s, col_s - 1) and self.is_friend(row_s, col_s, player):
                     moves.append((row_s, col_s - 1))
-                    break
-                else:
-                    for col in range(col_s, col_t + 1):
-                        if self.is_movable(row_s, col) and (self.is_friend(row_s, col + 1, player) or self.is_friend(row_s, col - 1, player)):
+                    sub_moves.append((row_s, col_s - 1))
+                for col in range(col_s, col_t + 1):
+                    if self.is_movable(row_s, col):
+                        if self.is_friend(row_s, col + 1, player) or self.is_friend(row_s, col - 1, player):
                             moves.append((row_s, col))
-                            break
+                        sub_moves.append((row_s, col))
+            elif not wb[0] == 0:
+                # for i in range(5):
+                #     if self.is_movable(row_s, col_s + i):
+                #         sub_moves.append((row_s, col_s + i))
+                pass
             else:
                 break
                 
         for wb in r2l_wb_list:
+            row_s, col_s = wb[1]
+            row_t, col_t = wb[2]
             if wb[0] == max_wb_list:
-                row_s, col_s = wb[1]
-                row_t, col_t = wb[2]
-                if self.is_movable(row_s - 1, col_s + 1) and self.is_friend(row_s, col_s, player):
-                    moves.append((row_s - 1, col_s + 1))
-                    break
-                else:
-                    for i in range(5):
-                        if self.is_movable(row_s + i, col_s + i) and (self.is_friend(row_s + i + 1, col_s + i - 1, player) or self.is_friend(row_s + i - 1, col_s + i + 1, player)):
-                            moves.append((row_s + i, col_s + i))
-                            break
+                
+                if self.is_movable(row_s + 1, col_s - 1) and self.is_friend(row_s, col_s, player):
+                    moves.append((row_s + 1, col_s - 1))
+                    sub_moves.append((row_s + 1, col_s - 1))
+                for i in range(5):
+                    if self.is_movable(row_s - i, col_s + i):
+                        if self.is_friend(row_s - i + 1, col_s + i - 1, player) or self.is_friend(row_s - i - 1, col_s + i + 1, player):
+                            moves.append((row_s - i, col_s + i))
+                        sub_moves.append((row_s - i, col_s + i))
+            elif not wb[0] == 0:
+                # for i in range(5):
+                #     if self.is_movable(row_s - i, col_s + i):
+                #         sub_moves.append((row_s - i, col_s + i))
+                pass
             else:
                 break   
                 
         for wb in col_wb_list:
+            row_s, col_s = wb[1]
+            row_t, col_t = wb[2]
             if wb[0] == max_wb_list:
-                row_s, col_s = wb[1]
-                row_t, col_t = wb[2]
+                
                 if self.is_movable(row_s - 1, col_s) and self.is_friend(row_s, col_s, player):
                     moves.append((row_s - 1, col_s))
-                    break
-                else:
-                    for row in range(row_s, row_t + 1):
-                        if self.is_movable(row, col_s) and (self.is_friend(row + 1, col_s, player) or self.is_friend(row - 1, col_s, player)):
+                    sub_moves.append((row_s - 1, col_s))
+                for row in range(row_s, row_t + 1):
+                    if self.is_movable(row, col_s):
+                        if self.is_friend(row + 1, col_s, player) or self.is_friend(row - 1, col_s, player):
                             moves.append((row, col_s))
-                            break
+                        sub_moves.append((row, col_s))
+            elif not wb[0] == 0:
+                # for i in range(5):
+                #     if self.is_movable(row_s + i, col_s):
+                #         sub_moves.append((row_s + i, col_s))
+                pass
             else:
                 break             
                         
         if len(moves) == 0:
-            return -1, -1
+            return [(-1, -1)], [(-1, -1)]
         else:
+            moves = list(set(moves))
+            sub_moves = list(set(sub_moves))
             moves = sorted(moves, key=lambda tup:(tup[1], tup[0]))
-            # print(moves)
-            return moves
+            sub_moves = sorted(sub_moves, key=lambda tup:(tup[1], tup[0]))
+            return moves, sub_moves
                                       
          
     def check_winner(self):
@@ -176,6 +225,31 @@ class Board:
             return 'blue'
         return 'not yet'
     
+    def check_complete(self, player):
+        row_wb_list = self.row_has_winning_block(player)
+        # print(row_wb_list)
+        col_wb_list = self.col_has_winning_block(player)
+        # print(col_wb_list)
+        l2r_wb_list = self.l2r_has_winning_block(player)
+        # print(l2r_wb_list)
+        r2l_wb_list = self.r2l_has_winning_block(player)
+        # print(r2l_wb_list)
+        
+        count = 0
+        for wb in row_wb_list:
+            if wb[0] == 5:
+                count += 1
+        for wb in col_wb_list:
+            if wb[0] == 5:
+                count += 1
+        for wb in l2r_wb_list:
+            if wb[0] == 5:
+                count += 1
+        for wb in r2l_wb_list:
+            if wb[0] == 5:
+                count += 1
+        return count
+
     def check_one_away(self, player):
         row_wb_list = self.row_has_winning_block(player)
         # print(row_wb_list)
@@ -190,23 +264,15 @@ class Board:
         for wb in row_wb_list:
             if wb[0] == 4:
                 count += 1
-            else:
-                break
         for wb in col_wb_list:
             if wb[0] == 4:
                 count += 1
-            else:
-                break
         for wb in l2r_wb_list:
             if wb[0] == 4:
                 count += 1
-            else:
-                break
         for wb in r2l_wb_list:
             if wb[0] == 4:
                 count += 1
-            else:
-                break
         return count
     
     def check_two_away(self, player):
@@ -301,35 +367,26 @@ class Board:
         if not len(starts) == 0:
             for start in starts:
                 row, col = start
-                if self.is_movable(row - 1, col - 1):
+                if self.is_movable(row - 1, col - 1) and self.is_movable(row + 3, col + 3):
                     return row - 1, col - 1
-                elif self.is_movable(row + 3, col + 3):
-                    return row + 3, col + 3
         starts = self.row_has_three(player)
         if not len(starts) == 0:
             for start in starts:
                 row, col = start
-                if self.is_movable(row, col - 1):
+                if self.is_movable(row, col - 1) and self.is_movable(row, col + 3):
                     return row, col - 1
-                elif self.is_movable(row, col + 3):
-                    return row, col + 3
         starts = self.r2l_has_three(player)
         if not len(starts) == 0:
             for start in starts:
                 row, col = start
-                if self.is_movable(row + 1, col - 1):
+                if self.is_movable(row + 1, col - 1) and self.is_movable(row - 3, col + 3):
                     return row + 1, col - 1
-                elif self.is_movable(row - 3, col + 3):
-                    return row - 3, col + 3
-        return -1, -1
         starts = self.col_has_three(player)
         if not len(starts) == 0:
             for start in starts:
                 row, col = start
-                if self.is_movable(row - 1, col):
+                if self.is_movable(row - 1, col) and self.is_movable(row + 3, col):
                     return row - 1, col
-                elif self.is_movable(row + 3, col):
-                    return row + 3, col
         return -1, -1
 
     
@@ -660,7 +717,7 @@ class Board:
                             flag = False
                             break
                 if flag:
-                    wb_list.append((count, (row, col), (row + 4, col - 4)))
+                    wb_list.append((count, (row, col), (row - 4, col + 4)))
         return wb_list
                      
     
