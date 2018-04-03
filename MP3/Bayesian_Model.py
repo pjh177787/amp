@@ -1,5 +1,6 @@
 import numpy as np
 import math
+import matplotlib.pyplot as plt
 
 class Bayesian_Model:
     def __init__(self):
@@ -119,6 +120,7 @@ class Bayesian_Model:
             line += 33
 
         correct_prec = correct / each
+        self.confusion_matrix = [[num/each for num in col] for col in self.confusion_matrix]
 
         print('For each digit, show the test examples from that class that have the highest and lowest posterior probabilities according to your classifier.')
         print(largest_posterior)
@@ -133,9 +135,31 @@ class Bayesian_Model:
         for i in range(10):
             print(self.confusion_matrix[i])
 
-
         print(predictions)
         print(correct_prec)
 
-        # print heatmap
-        # self.digitClassificationModel.oddsRatioMap(eachImage)
+        confusion_tuple = [((i, j), self.confusion_matrix[i][j]) for j in range(10) for i in range(10)]
+        confusion_tuple = list(filter(lambda x: x[0][0] != x[0][1], confusion_tuple))
+        confusion_tuple.sort(key = lambda x: -x[1])
+        
+        for i in range(4):
+            feature1_pre = self.train_classes[confusion_tuple[i][0][0]]
+            feature1 = [[chardict['1'] for chardict in row] for row in feature1_pre]
+            feature2_pre = self.train_classes[confusion_tuple[i][0][1]]
+            feature2 = [[chardict['1'] for chardict in row] for row in feature2_pre]
+
+            fig = [None for k in range(3)]
+            axes = [None for k in range(3)]
+            heatmap = [None for k in range(3)]
+            features =  [feature1,feature2, list(np.array(feature1) - np.array(feature2))]
+            for k in range(3):
+                fig[k], axes[k] = plt.subplots()  
+                heatmap[k] = axes[k].pcolor(features[k], cmap="jet")
+                axes[k].invert_yaxis()
+                axes[k].xaxis.tick_top()
+                plt.tight_layout()
+                plt.colorbar(heatmap[k])
+                # plt.show()
+                plt.savefig('src/binaryheatmap%.0f%d.png' % (i + 1, k + 1) )
+            
+            
