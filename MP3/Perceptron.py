@@ -82,6 +82,85 @@ class Preceptron:
                 print('epoch #%d, learning_rate = %.3f, error = %.3f' %(epoch, learning_rate, total_error))
                 print(self.weight_list[label])
 
-    def perceptron_training(self, learning_rate, num_epoch):
+    def perceptron_test(self, learning_rate = 0.05, num_epoch = 10, bias = True):
         self.train_weights(self.training_classes, self.training_labels, learning_rate, num_epoch)
 
+        predictions = []
+        correct_counts = [0 for i in range(10)]
+        total_counts = [0 for i in range(10)]
+        correct = 0
+        each = 0
+        line = 0
+        for label in self.testing_labels:
+            predicted = 0
+            for each_possibility in range(10):
+                possibility = self.priors[each_possibility]
+                for i in range(32):
+                    for j in range(32):
+                        pixel = self.test_classes[each][i][j]
+                        possibility += self.train_classes[each_possibility][i][j][pixel]
+                if possibility > maxi:
+                    predicted = each_possibility
+                    maxi = possibility
+                if possibility < mini:
+                    mini = possibility
+            predictions.append(predicted)
+            if maxi > largest_posterior[label][0]:
+                largest_posterior[label][0] = maxi
+                largest_posterior[label][1] = line
+            if mini < smallest_posterior[label][0]:
+                smallest_posterior[label][0] = mini
+                smallest_posterior[label][1] = line
+
+            self.confusion_matrix[predicted][label] += 1
+
+            if label == predicted:
+                correct += 1
+                correct_counts[label] += 1
+            total_counts[label] += 1
+
+            each += 1
+            line += 33
+
+        correct_prec = correct / each
+        self.confusion_matrix = [[num/each for num in col] for col in self.confusion_matrix]
+
+        print('For each digit, show the test examples from that class that have the highest and lowest posterior probabilities according to your classifier.')
+        print(largest_posterior)
+        print('\n')
+        print(smallest_posterior)
+
+        print('Classification Rate For Each Digit:')
+        for i in range(10):
+            print(i, correct_counts[i]/total_counts[i])
+
+        print('Confusion Matrix:')
+        for i in range(10):
+            print(self.confusion_matrix[i])
+
+        print(predictions)
+        print(correct_prec)
+
+        confusion_tuple = [((i, j), self.confusion_matrix[i][j]) for j in range(10) for i in range(10)]
+        confusion_tuple = list(filter(lambda x: x[0][0] != x[0][1], confusion_tuple))
+        confusion_tuple.sort(key = lambda x: -x[1])
+        
+        for i in range(4):
+            feature1_pre = self.train_classes[confusion_tuple[i][0][0]]
+            feature1 = [[chardict['1'] for chardict in row] for row in feature1_pre]
+            feature2_pre = self.train_classes[confusion_tuple[i][0][1]]
+            feature2 = [[chardict['1'] for chardict in row] for row in feature2_pre]
+
+            fig = [None for k in range(3)]
+            axes = [None for k in range(3)]
+            heatmap = [None for k in range(3)]
+            features =  [feature1,feature2, list(np.array(feature1) - np.array(feature2))]
+            for k in range(3):
+                fig[k], axes[k] = plt.subplots()  
+                heatmap[k] = axes[k].pcolor(features[k], cmap="jet")
+                axes[k].invert_yaxis()
+                axes[k].xaxis.tick_top()
+                plt.tight_layout()
+                plt.colorbar(heatmap[k])
+                # plt.show()
+                plt.savefig('src/binaryheatmap%.0f%d.png' % (i + 1, k + 1) )
