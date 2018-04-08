@@ -9,7 +9,7 @@ class Preceptron:
         self.testing_classes =  []
         self.testing_labels = []
         self.weight_list = np.zeros((10, 1025))
-        self.confusion_matrix = [[0 for i in range(10)] for i in range(10)]
+        self.confusion_matrix = np.zeros((10, 10))
 
         self.parse_files(trainfile_name, testfile_name)
 
@@ -46,7 +46,7 @@ class Preceptron:
             for i in range(32):
                 image_line = testfile.readline()
                 for j in range(32):
-                    image.append(image_line[j])
+                    image.append(int(image_line[j]))
             image_line = testfile.readline()
             for ch in image_line:
                 if ch.isdigit() and int(ch) != label:
@@ -59,7 +59,10 @@ class Preceptron:
         activation = weights[-1]
         for i in range(len(row) - 1):
             activation += weights[i] * row[i]
-        return 1 if activation >= 0 else 0
+        if activation >= 0:
+            return 1, activation
+        else:
+            return 0, activation
 
     def train_weights(self, training_data, target_labels, learning_rate, num_epoch):
         for label in range(10):
@@ -70,40 +73,57 @@ class Preceptron:
                 else:
                     row = training_data[idx] + [0]
                 data_set.append(row)
+            learning_rate_new = learning_rate
             for epoch in range(num_epoch):
                 total_error = 0
                 for row in data_set:
-                    prediction = self.predict(row, self.weight_list[label])
+                    prediction = self.predict(row, self.weight_list[label])[0]
                     error = row[-1] - prediction
                     total_error += error**2
-                    self.weight_list[label][-1] = self.weight_list[label][-1] + learning_rate*error
+                    self.weight_list[label][-1] = self.weight_list[label][-1] + learning_rate_new*error
                     for i in range(len(row) - 1):
-                        self.weight_list[label][i] = self.weight_list[label][i] + learning_rate*error*row[i]
-                print('epoch #%d, learning_rate = %.3f, error = %.3f' %(epoch, learning_rate, total_error))
+                        self.weight_list[label][i] = self.weight_list[label][i] + learning_rate_new*error*row[i]
+                print('Digit#%d, epoch #%d, learning_rate = %.3f, error = %.3f' %(label, epoch, learning_rate_new, total_error))
                 print(self.weight_list[label])
+                learning_rate_new *= 0.9
+                if total_error < learning_rate:
+                    break
 
-    def perceptron_test(self, learning_rate = 0.05, num_epoch = 10, bias = True):
+    def perceptron_train(self, learning_rate = 0.05, num_epoch = 10):
         self.train_weights(self.training_classes, self.training_labels, learning_rate, num_epoch)
 
+    def perceptron_test(self, bias_en = True):
         predictions = []
         correct_counts = [0 for i in range(10)]
         total_counts = [0 for i in range(10)]
         correct = 0
         each = 0
         line = 0
-        for label in self.testing_labels:
+        largest_posterior = [[float('-inf'), " "] for i in range(10)]
+        smallest_posterior = [[float('inf'), " "] for i in range(10)]
+
+        if bias_en:
+            bias = [1]
+        else:
+            bias = [0]
+        for idx in range(len(self.testing_labels)):
+            maxi = float('-inf')
+            mini = float('inf')
             predicted = 0
+            label = self.testing_labels[idx]
+            candidates = []
             for each_possibility in range(10):
-                possibility = self.priors[each_possibility]
-                for i in range(32):
-                    for j in range(32):
-                        pixel = self.test_classes[each][i][j]
-                        possibility += self.train_classes[each_possibility][i][j][pixel]
+                row = self.testing_classes[idx] + bias
+                actuation, possibility = self.predict(row, self.weight_list[each_possibility])
                 if possibility > maxi:
                     predicted = each_possibility
                     maxi = possibility
                 if possibility < mini:
                     mini = possibility
+                if actuation == 1:
+                    candidates.append((each_possibility, possibility))
+            # print(candidates)
+            
             predictions.append(predicted)
             if maxi > largest_posterior[label][0]:
                 largest_posterior[label][0] = maxi
@@ -123,7 +143,7 @@ class Preceptron:
             line += 33
 
         correct_prec = correct / each
-        self.confusion_matrix = [[num/each for num in col] for col in self.confusion_matrix]
+        self.confusion_matrix = np.array([[num/each for num in col] for col in self.confusion_matrix])
 
         print('For each digit, show the test examples from that class that have the highest and lowest posterior probabilities according to your classifier.')
         print(largest_posterior)
@@ -141,26 +161,26 @@ class Preceptron:
         print(predictions)
         print(correct_prec)
 
-        confusion_tuple = [((i, j), self.confusion_matrix[i][j]) for j in range(10) for i in range(10)]
-        confusion_tuple = list(filter(lambda x: x[0][0] != x[0][1], confusion_tuple))
-        confusion_tuple.sort(key = lambda x: -x[1])
+        # confusion_tuple = [((i, j), self.confusion_matrix[i][j]) for j in range(10) for i in range(10)]
+        # confusion_tuple = list(filter(lambda x: x[0][0] != x[0][1], confusion_tuple))
+        # confusion_tuple.sort(key = lambda x: -x[1])
         
-        for i in range(4):
-            feature1_pre = self.train_classes[confusion_tuple[i][0][0]]
-            feature1 = [[chardict['1'] for chardict in row] for row in feature1_pre]
-            feature2_pre = self.train_classes[confusion_tuple[i][0][1]]
-            feature2 = [[chardict['1'] for chardict in row] for row in feature2_pre]
+        # for i in range(4):
+        #     feature1_pre = self.training_classes[confusion_tuple[i][0][0]]
+        #     feature1 = [[chardict['1'] for chardict in row] for row in feature1_pre]
+        #     feature2_pre = self.training_classes[confusion_tuple[i][0][1]]
+        #     feature2 = [[chardict['1'] for chardict in row] for row in feature2_pre]
 
-            fig = [None for k in range(3)]
-            axes = [None for k in range(3)]
-            heatmap = [None for k in range(3)]
-            features =  [feature1,feature2, list(np.array(feature1) - np.array(feature2))]
-            for k in range(3):
-                fig[k], axes[k] = plt.subplots()  
-                heatmap[k] = axes[k].pcolor(features[k], cmap="jet")
-                axes[k].invert_yaxis()
-                axes[k].xaxis.tick_top()
-                plt.tight_layout()
-                plt.colorbar(heatmap[k])
-                # plt.show()
-                plt.savefig('src/binaryheatmap%.0f%d.png' % (i + 1, k + 1) )
+        #     fig = [None for k in range(3)]
+        #     axes = [None for k in range(3)]
+        #     heatmap = [None for k in range(3)]
+        #     features =  [feature1,feature2, list(np.array(feature1) - np.array(feature2))]
+        #     for k in range(3):
+        #         fig[k], axes[k] = plt.subplots()  
+        #         heatmap[k] = axes[k].pcolor(features[k], cmap="jet")
+        #         axes[k].invert_yaxis()
+        #         axes[k].xaxis.tick_top()
+        #         plt.tight_layout()
+        #         plt.colorbar(heatmap[k])
+        #         # plt.show()
+        #         plt.savefig('src/binaryheatmap%.0f%d.png' % (i + 1, k + 1) )

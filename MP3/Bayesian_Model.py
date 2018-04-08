@@ -16,7 +16,7 @@ class Bayesian_Model:
                 for i in range(32)]
             for i in range(444)]
         self.testing_labels = []
-        self.confusion_matrix = [[0 for i in range(10)] for i in range(10)]
+        self.confusion_matrix = np.zeros((10, 10))
         self.count = np.zeros(10) # count of appearances of each number in the training sample
         self.priors = np.zeros(10)
 
@@ -84,9 +84,10 @@ class Bayesian_Model:
         total_counts = [0 for i in range(10)]
         correct = 0
         each = 0
+        line = 0
         largest_posterior = [[float('-inf'), " "] for i in range(10)]
         smallest_posterior = [[float('inf'), " "] for i in range(10)]
-        line = 0
+        
         for label in self.testing_labels:
             maxi = float('-inf')
             mini = float('inf')
@@ -121,11 +122,10 @@ class Bayesian_Model:
             line += 33
 
         correct_prec = correct / each
-        self.confusion_matrix = [[num/each for num in col] for col in self.confusion_matrix]
+        self.confusion_matrix = np.array([[num/each for num in col] for col in self.confusion_matrix])
 
         print('For each digit, show the test examples from that class that have the highest and lowest posterior probabilities according to your classifier.')
         print(largest_posterior)
-        print('\n')
         print(smallest_posterior)
 
         print('Classification Rate For Each Digit:')
