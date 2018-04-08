@@ -18,7 +18,7 @@ class Bayesian_Model:
         self.count = np.zeros(10) # count of appearances of each number in the training sample
         self.priors = np.zeros(10)
 
-    def train(self, trainfile_name, smooth_factor):
+    def parse_file(self, trainfile_name, testfile_name, smooth_factor):
         trainfile = open(trainfile_name, 'r')
         label_list = []
         for line in trainfile:
@@ -37,29 +37,12 @@ class Bayesian_Model:
             for ch in image_line:
                 if ch.isdigit() and int(ch) != label:
                     print('TRAINFILE ALIGN ERROR')
-        self.laplace_smooth(smooth_factor)
         trainfile.close()
 
-    def laplace_smooth(self, factor):
-        for num in range(10):
-            if self.count[num] > 0:
-                denom = self.count[num] + factor*2
-            else:
-                denom = float('-inf')
-            for i in range(32):
-                for j in range(32):
-                    for pixel in self.train_classes[num][i][j]:
-                        self.train_classes[num][i][j][pixel] = self.train_classes[num][i][j][pixel] + factor  - denom
-
-    def prior(self):
-        total_count = sum(self.count)
-        self.priors = [num/total_count for num in self.count]
-
-    def test(self):
-        self.train('./digitdata/optdigits-orig_train.txt', 1)
+        self.laplace_smooth(smooth_factor)
         self.prior()
 
-        testfile = open('./digitdata/optdigits-orig_test.txt', 'r')
+        testfile = open(testfile_name, 'r')
         label_list = []
         for line in testfile:
             if len(line) < 32:
@@ -77,6 +60,24 @@ class Bayesian_Model:
                 if ch.isdigit() and int(ch) != label_list[idx]:
                     print('TESTFILE ALIGN ERROR')
         testfile.close()
+
+    def laplace_smooth(self, factor):
+        for num in range(10):
+            if self.count[num] > 0:
+                denom = self.count[num] + factor*2
+            else:
+                denom = float('-inf')
+            for i in range(32):
+                for j in range(32):
+                    for pixel in self.train_classes[num][i][j]:
+                        self.train_classes[num][i][j][pixel] = self.train_classes[num][i][j][pixel] + factor  - denom
+
+    def prior(self):
+        total_count = sum(self.count)
+        self.priors = [num/total_count for num in self.count]
+
+    def test(self):
+        self.parse_file('./digitdata/optdigits-orig_train.txt', './digitdata/optdigits-orig_test.txt', 1)
 
         predictions = []
         correct_counts = [0 for i in range(10)]
