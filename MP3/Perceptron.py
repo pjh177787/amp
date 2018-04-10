@@ -65,6 +65,7 @@ class Preceptron:
             return 0, activation
 
     def train_weights(self, training_data, target_labels, learning_rate, num_epoch):
+        learning_curve = np.zeros((10, num_epoch))
         for label in range(10):
             data_set = []
             for idx in range(len(training_data)):
@@ -83,14 +84,15 @@ class Preceptron:
                     self.weight_list[label][-1] = self.weight_list[label][-1] + learning_rate_new*error
                     for i in range(len(row) - 1):
                         self.weight_list[label][i] = self.weight_list[label][i] + learning_rate_new*error*row[i]
-                print('Digit#%d, epoch #%d, learning_rate = %.3f, error = %.3f' %(label, epoch, learning_rate_new, total_error))
-                print(self.weight_list[label])
+                # print('Digit#%d, epoch #%d, learning_rate = %.3f, error = %.3f' %(label, epoch, learning_rate_new, total_error))
+                learning_curve[label][epoch] = total_error
                 learning_rate_new *= 0.9
-                if total_error < learning_rate:
-                    break
+                # if total_error < learning_rate:
+                    # break
+        return learning_curve
 
     def perceptron_train(self, learning_rate = 0.05, num_epoch = 10):
-        self.train_weights(self.training_classes, self.training_labels, learning_rate, num_epoch)
+        return self.train_weights(self.training_classes, self.training_labels, learning_rate, num_epoch)
 
     def perceptron_test(self, bias_en = True):
         predictions = []
@@ -143,7 +145,10 @@ class Preceptron:
             line += 33
 
         correct_prec = correct / each
-        self.confusion_matrix = np.array([[num/each for num in col] for col in self.confusion_matrix])
+        for i in range(10):
+            for j in range(10):
+                num = self.confusion_matrix[i][j]
+                self.confusion_matrix[i][j] = num/total_counts[j]
 
         print('For each digit, show the test examples from that class that have the highest and lowest posterior probabilities according to your classifier.')
         print(largest_posterior)

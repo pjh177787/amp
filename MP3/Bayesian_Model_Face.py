@@ -2,63 +2,53 @@ import numpy as np
 import math
 import matplotlib.pyplot as plt
 
-class Bayesian_Model:
+class Bayesian_Model_Face:
     def __init__(self):
-        self.training_classes = [
+        self.training_classes = 
             [
-                [{'1':0, '0':0} for i in range(32)]
-                for i in range(32)]
-            for i in range(10)]
+                [{'#':0, ' ':0} for i in range(60)]
+                for i in range(70)]
         self.training_labels = []
         self.testing_classes =  [
             [
-                [' ' for i in range(32)]
-                for i in range(32)]
-            for i in range(444)]
+                [' ' for i in range(60)]
+                for i in range(70)]
+            for i in range(150)]
         self.testing_labels = []
         self.confusion_matrix = np.zeros((10, 10))
         self.count = np.zeros(10) # count of appearances of each number in the training sample
         self.priors = np.zeros(10)
 
-    def parse_file(self, trainfile_name, testfile_name, smooth_factor):
+    def parse_file(self, trainfile_name, trainlabel_name, testfile_name, testlabel_name,  smooth_factor):
         trainfile = open(trainfile_name, 'r')
-        for line in trainfile:
-            if len(line) < 32:
-                for ch in line:
-                    if ch.isdigit():
-                        self.training_labels.append(int(ch))
-        trainfile.seek(0)
+        trainlabel = open(trainlabel_name, 'r')
+        for line in trainlabel:
+            for ch in line:
+                if ch.isdigit():
+                    self.training_labels.append(int(ch))
         for label in self.training_labels:
             self.count[label] += 1
-            for i in range(32):
+            for i in range(70):
                 image_line = trainfile.readline()
-                for j in range(32):
+                for j in range(len(image_line)):
                     self.training_classes[label][i][j][image_line[j]] += 1
-            image_line = trainfile.readline()
-            for ch in image_line:
-                if ch.isdigit() and int(ch) != label:
-                    print('TRAINFILE ALIGN ERROR')
         trainfile.close()
 
         self.laplace_smooth(smooth_factor)
         self.prior()
 
         testfile = open(testfile_name, 'r')
-        for line in testfile:
-            if len(line) < 32:
-                for ch in line:
-                    if ch.isdigit():
-                        self.testing_labels.append(int(ch))
-        testfile.seek(0)        
+        testlabel = open(testlabel_name, 'r')
+        for line in testlabel:
+            for ch in line:
+                if ch.isdigit():
+                    self.testing_labels.append(int(ch))      
         for idx in range(len(self.testing_labels)):
-            for i in range(32):
+            for i in range(70):
                 image_line = testfile.readline()
-                for j in range(32):
+                print(len(image_line))
+                for j in range(len(image_line)):
                     self.testing_classes[idx][i][j] = image_line[j]
-            image_line = testfile.readline()
-            for ch in image_line:
-                if ch.isdigit() and int(ch) != self.testing_labels[idx]:
-                    print('TESTFILE ALIGN ERROR')
         testfile.close()
 
     def laplace_smooth(self, factor):
@@ -67,8 +57,8 @@ class Bayesian_Model:
                 denom = math.log2(self.count[num] + factor*2)
             else:
                 denom = float('-inf')
-            for i in range(32):
-                for j in range(32):
+            for i in range(70):
+                for j in range(len(image_line)):
                     for pixel in self.training_classes[num][i][j]:
                         self.training_classes[num][i][j][pixel] = math.log2(self.training_classes[num][i][j][pixel] + factor)  - denom
 
@@ -77,7 +67,7 @@ class Bayesian_Model:
         self.priors = [num/total_count for num in self.count]
 
     def test(self):
-        self.parse_file('./digitdata/optdigits-orig_train.txt', './digitdata/optdigits-orig_test.txt', 1)
+        self.parse_file('./facedata/facedatatrain', './facedata/facedatatrainlabels', './facedata/facedatatest', './facedata/facedatatestlabels', 1)
 
         predictions = []
         correct_counts = [0 for i in range(10)]
@@ -94,7 +84,7 @@ class Bayesian_Model:
             predicted = 0
             for each_possibility in range(10):
                 possibility = math.log2(self.priors[each_possibility])
-                for i in range(32):
+                for i in range(70):
                     for j in range(32):
                         pixel = self.testing_classes[each][i][j]
                         possibility += self.training_classes[each_possibility][i][j][pixel]
@@ -163,6 +153,6 @@ class Bayesian_Model:
                 axes[k].xaxis.tick_top()
                 plt.tight_layout()
                 plt.colorbar(heatmap[k])
-                # plt.show()
-                plt.savefig('src/binaryheatmap%.0f%d.png' % (i + 1, k + 1) )
+                plt.show()
+                # plt.savefig('src/binaryheatmap%.0f%d.png' % (i + 1, k + 1) )
             
