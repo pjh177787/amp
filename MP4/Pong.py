@@ -1,5 +1,9 @@
+import argparse
+import os
 import random as rd
 import math
+from jsonpickle import encode, decode
+from datetime import datetime
 
 class Pong:
     VOID = 0
@@ -26,7 +30,7 @@ class Pong:
                 if self.paddle_y < (1 - Pong.PADDLE_HEIGHT - Pong.PADDLE_STEP):
                     self.paddle_y += pad_move
                 else:
-                    self.paddle_y = 1 - PADDLE_HEIGHT
+                    self.paddle_y = 1 - Pong.PADDLE_HEIGHT
             if pad_move < 0:
                 if self.paddle_y > Pong.PADDLE_STEP:
                     self.paddle_y += pad_move
@@ -48,7 +52,7 @@ class Pong:
             velocity_y = (1 if self.velocity_y > 0 else -1) if abs(self.velocity_y) >= 0.015 else 0
             disc_pad = math.floor((self.board_size[1] - 1)*self.paddle_y/(1 - Pong.PADDLE_HEIGHT))
             paddle_y = disc_pad if disc_pad < self.board_size[1] else self.board_size[1] - 1
-            reture (ball_x, ball_y, velocity_x, velocity_y, paddle_y)
+            return (ball_x, ball_y, velocity_x, velocity_y, paddle_y)
 
         def is_good_game(self):
             return self.ball_x > 1
@@ -69,7 +73,7 @@ class Pong:
             self.gamma = gamma
             self.ne = ne
             self.board_size = board_size
-            self.explore = True
+            self.is_explore = True
 
         def locate(self, utility, state):
             (ball_x, ball_y, velocity_x, velocity_y, paddle_y) = state
@@ -87,7 +91,7 @@ class Pong:
             return self.locate(self.action_utility, state)[action].utility
 
         def set_explore(self, boo):
-            self.explore = boo
+            self.is_explore = boo
 
         def policy(self, curr_state):
             return self.get_max_pairs(list(map(lambda each_action: (each_action, self.explore(curr_state, each_action)), range(0, 3))))
@@ -99,10 +103,62 @@ class Pong:
                 self.alpha(self.locate(self.action_utility, curr_state)[action].frequency) \
                 *(reward + self.gamma*max_q - self.locate(self.action_utility, curr_state)[action].utility)
 
-    def __init__(self.ball_x, ball_y, velocity_x, velocity_y, paddle_y, board_size):
+    def __init__(self, ball_x, ball_y, velocity_x, velocity_y, paddle_y, board_size):
         self.board_size = board_size
         self.restart(ball_x, ball_y, velocity_x, velocity_y, paddle_y)
 
     def restart(self, ball_x, ball_y, velocity_x, velocity_y, paddle_y):
-        self.stae = Pong.State(ball_x, ball_y, velocity_x, velocity_y, paddle_y, self.board_size)
+        self.state = Pong.State(ball_x, ball_y, velocity_x, velocity_y, paddle_y, self.board_size)
 
+    def game(self, agent):
+        while not self.state.is_good_game():
+            self.curr_state = self.state.get_state()
+            curr_state = 0
+            next_action = agent.policy(self.curr_state)
+            self.proceed(next_action)
+            self.next_state = self.state.get_state()
+            agent.update_utility(self.curr_state, self.next_state, next_action, self.state.score)
+
+    def proceed(self, action):
+        self.state.score = 0
+        prev_x = self.state.ball_x
+        prev_y = self.state.ball_y
+        self.state.ball_x += self.state.velocity_x
+        self.state.ball_y += self.state.velocity_y
+
+        if action == Pong.UP:
+            self.state.move_paddle(-Pong.PADDLE_STEP)
+        elif action == Pong.DOWN:
+            self.state.move_paddle(Pong.PADDLE_STEP)
+
+        if self.state.ball_y < 0:
+            self.state.ball_y *= -1
+            self.state.velocity_y *= -1
+        if self.state.ball_y > 1:
+            self.state.ball_y = 2 - self.state.ball_y
+            self.state.velocity_y *= -1
+        if self.state.ball_x < 0:
+            self.state.ball_x *= -1
+            self.state.velocity_x *= -1
+        if self.rebounce(prev_x, prev_y):
+            self.state.score = Pong.REWARDS['rebounce']
+            self.state.bounce_count += 1
+            self.state.ball_x = 2*Pong.PADDLE_X - self.state.ball_x
+            self.state.rand_v()
+        if self.state.is_good_game():
+            self.state.score = Pong.REWARDS['pass']
+        return self.state.score
+
+    def rebounce(self, prev_x, prev_y):
+        intersection = prev_y + (self.state.ball_y - prev_y)/(self.state.ball_x - prev_x)*(1 - prev_x)
+        return self.state.ball_x >= 1 and intersection >= self.state.paddle_y \
+        and intersection <= self.state.paddle_y + Pong.PADDLE_HEIGHT 
+def find(dir, file):
+    for root, dir, files in os.walk(dir):
+        if file in files:
+            return True
+    return False
+
+def parse_utility(utility):
+    return [[Pong.Agent.Utility(item[action]['utility'], item[action]['frequency'])
+            for action in range(3)] for item in utility]
