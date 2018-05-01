@@ -10,7 +10,7 @@ class Pong:
     UP = 1
     DOWN = 2
     PADDLE_HEIGHT = 0.2
-    PADDLE_STEP = 0.4
+    PADDLE_STEP = 0.04
     PADDLE_X = 1
     REWARDS = {'rebounce': 1, 'pass': -1, 'other': 0, 'best':2}
 
@@ -27,11 +27,11 @@ class Pong:
 
         def move_paddle(self, pad_move):
             if pad_move > 0:
-                if self.paddle_y < (1 - Pong.PADDLE_HEIGHT - Pong.PADDLE_STEP):
+                if self.paddle_y < 1 - Pong.PADDLE_HEIGHT - Pong.PADDLE_STEP:
                     self.paddle_y += pad_move
                 else:
                     self.paddle_y = 1 - Pong.PADDLE_HEIGHT
-            if pad_move < 0:
+            elif pad_move < 0:
                 if self.paddle_y > Pong.PADDLE_STEP:
                     self.paddle_y += pad_move
                 else:
@@ -97,7 +97,9 @@ class Pong:
             return self.get_max_pairs(list(map(lambda each_action: (each_action, self.explore(curr_state, each_action)), range(0, 3))))
 
         def update_utility(self, curr_state, next_state, action, reward):
+            # print(self.locate(self.action_utility, curr_state)[action].frequency, self.locate(self.action_utility, curr_state)[action].utility)
             self.locate(self.action_utility, curr_state)[action].frequency += 1
+            # print(self.locate(self.action_utility, curr_state)[action].frequency, self.locate(self.action_utility, curr_state)[action].utility)
             max_q = max(list(map(lambda each_util: each_util.utility, self.locate(self.action_utility, next_state)))) if reward != Pong.REWARDS['pass'] else 0
             self.locate(self.action_utility, curr_state)[action].utility += \
                 self.alpha(self.locate(self.action_utility, curr_state)[action].frequency) \
@@ -113,8 +115,10 @@ class Pong:
     def game(self, agent):
         while not self.state.is_good_game():
             self.curr_state = self.state.get_state()
+            # print(self.curr_state)
             curr_state = 0
             next_action = agent.policy(self.curr_state)
+            # print(next_action)
             self.proceed(next_action)
             self.next_state = self.state.get_state()
             agent.update_utility(self.curr_state, self.next_state, next_action, self.state.score)
@@ -152,7 +156,8 @@ class Pong:
     def rebounce(self, prev_x, prev_y):
         intersection = prev_y + (self.state.ball_y - prev_y)/(self.state.ball_x - prev_x)*(1 - prev_x)
         return self.state.ball_x >= 1 and intersection >= self.state.paddle_y \
-        and intersection <= self.state.paddle_y + Pong.PADDLE_HEIGHT 
+            and intersection <= self.state.paddle_y + Pong.PADDLE_HEIGHT
+
 def find(dir, file):
     for root, dir, files in os.walk(dir):
         if file in files:
