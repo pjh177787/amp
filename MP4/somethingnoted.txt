@@ -1,0 +1,327 @@
+4 0.7 50
+not input file: ./training_result/training_c4_gamma0.7_ne50_file.txt
+average bounces per round 11.114
+stop training
+time spent:  314
+4 0.7 100
+not input file: ./training_result/training_c4_gamma0.7_ne100_file.txt
+average bounces per round 12.074
+stop training
+time spent:  194
+4 0.7 150
+not input file: ./training_result/training_c4_gamma0.7_ne150_file.txt
+average bounces per round 10.969
+stop training
+time spent:  109
+4 0.7 200
+not input file: ./training_result/training_c4_gamma0.7_ne200_file.txt
+average bounces per round 12.374
+stop training
+time spent:  96
+4 0.7 250
+not input file: ./training_result/training_c4_gamma0.7_ne250_file.txt
+average bounces per round 11.791
+stop training
+time spent:  88
+4 0.8 50
+not input file: ./training_result/training_c4_gamma0.8_ne50_file.txt
+average bounces per round 10.722
+stop training
+time spent:  325
+4 0.8 100
+not input file: ./training_result/training_c4_gamma0.8_ne100_file.txt
+average bounces per round 10.577
+stop training
+time spent:  193
+4 0.8 150
+not input file: ./training_result/training_c4_gamma0.8_ne150_file.txt
+average bounces per round 12.708
+stop training
+time spent:  120
+4 0.8 200
+not input file: ./training_result/training_c4_gamma0.8_ne200_file.txt
+average bounces per round 11.532
+stop training
+time spent:  103
+4 0.8 250
+not input file: ./training_result/training_c4_gamma0.8_ne250_file.txt
+average bounces per round 11.648
+stop training
+time spent:  90
+4 0.9 50
+not input file: ./training_result/training_c4_gamma0.9_ne50_file.txt
+average bounces per round 9.816
+stop training
+time spent:  302
+4 0.9 100
+not input file: ./training_result/training_c4_gamma0.9_ne100_file.txt
+average bounces per round 8.854
+stop training
+time spent:  177
+4 0.9 150
+not input file: ./training_result/training_c4_gamma0.9_ne150_file.txt
+average bounces per round 9.236
+stop training
+time spent:  108
+4 0.9 200
+not input file: ./training_result/training_c4_gamma0.9_ne200_file.txt
+average bounces per round 9.879
+stop training
+time spent:  94
+4 0.9 250
+not input file: ./training_result/training_c4_gamma0.9_ne250_file.txt
+average bounces per round 12.347
+stop training
+time spent:  91
+4 1.0 50
+not input file: ./training_result/training_c4_gamma1.0_ne50_file.txt
+average bounces per round 8.705
+stop training
+time spent:  284
+4 1.0 100
+not input file: ./training_result/training_c4_gamma1.0_ne100_file.txt
+average bounces per round 8.136
+stop training
+time spent:  151
+4 1.0 150
+not input file: ./training_result/training_c4_gamma1.0_ne150_file.txt
+average bounces per round 10.154
+stop training
+time spent:  115
+4 1.0 200
+not input file: ./training_result/training_c4_gamma1.0_ne200_file.txt
+average bounces per round 10.819
+stop training
+time spent:  99
+4 1.0 250
+not input file: ./training_result/training_c4_gamma1.0_ne250_file.txt
+average bounces per round 8.984
+stop training
+time spent:  89
+4 1.1 50
+not input file: ./training_result/training_c4_gamma1.1_ne50_file.txt
+average bounces per round 6.886
+stop training
+time spent:  214
+4 1.1 100
+not input file: ./training_result/training_c4_gamma1.1_ne100_file.txt
+average bounces per round 6.772
+stop training
+time spent:  143
+4 1.1 150
+not input file: ./training_result/training_c4_gamma1.1_ne150_file.txt
+average bounces per round 3.83
+stop training
+time spent:  90
+4 1.1 200
+not input file: ./training_result/training_c4_gamma1.1_ne200_file.txt
+average bounces per round 7.845
+stop training
+time spent:  94
+4 1.1 250
+not input file: ./training_result/training_c4_gamma1.1_ne250_file.txt
+average bounces per round 5.793
+stop training
+time spent:  80
+7 0.7 50
+not input file: ./training_result/training_c7_gamma0.7_ne50_file.txt
+average bounces per round 11.795
+stop training
+time spent:  345
+7 0.7 100
+not input file: ./training_result/training_c7_gamma0.7_ne100_file.txt
+average bounces per round 12.468
+stop training
+time spent:  205
+7 0.7 150
+not input file: ./training_result/training_c7_gamma0.7_ne150_file.txt
+average bounces per round 11.498
+stop training
+time spent:  112
+7 0.7 200
+not input file: ./training_result/training_c7_gamma0.7_ne200_file.txt
+average bounces per round 11.273
+stop training
+time spent:  96
+7 0.7 250
+not input file: ./training_result/training_c7_gamma0.7_ne250_file.txt
+average bounces per round 11.263
+stop training
+time spent:  88
+7 0.8 50
+not input file: ./training_result/training_c7_gamma0.8_ne50_file.txt
+average bounces per round 14.542
+stop training
+time spent:  379
+7 0.8 100
+not input file: ./training_result/training_c7_gamma0.8_ne100_file.txt
+average bounces per round 13.107
+stop training
+time spent:  210
+7 0.8 150
+not input file: ./training_result/training_c7_gamma0.8_ne150_file.txt
+average bounces per round 12.282
+stop training
+time spent:  113
+7 0.8 200
+not input file: ./training_result/training_c7_gamma0.8_ne200_file.txt
+average bounces per round 11.02
+stop training
+time spent:  91
+7 0.8 250
+not input file: ./training_result/training_c7_gamma0.8_ne250_file.txt
+average bounces per round 11.371
+stop training
+time spent:  83
+7 0.9 50
+not input file: ./training_result/training_c7_gamma0.9_ne50_file.txt
+average bounces per round 12.62
+stop training
+time spent:  345
+7 0.9 100
+not input file: ./training_result/training_c7_gamma0.9_ne100_file.txt
+average bounces per round 11.526
+stop training
+time spent:  208
+7 0.9 150
+not input file: ./training_result/training_c7_gamma0.9_ne150_file.txt
+average bounces per round 12.874
+stop training
+time spent:  121
+7 0.9 200
+not input file: ./training_result/training_c7_gamma0.9_ne200_file.txt
+average bounces per round 10.463
+stop training
+time spent:  94
+7 0.9 250
+not input file: ./training_result/training_c7_gamma0.9_ne250_file.txt
+average bounces per round 11.207
+stop training
+time spent:  85
+7 1.0 50
+not input file: ./training_result/training_c7_gamma1.0_ne50_file.txt
+average bounces per round 10.476
+stop training
+time spent:  313
+7 1.0 100
+not input file: ./training_result/training_c7_gamma1.0_ne100_file.txt
+average bounces per round 10.292
+stop training
+time spent:  192
+7 1.0 150
+not input file: ./training_result/training_c7_gamma1.0_ne150_file.txt
+average bounces per round 10.513
+stop training
+time spent:  118
+7 1.0 200
+not input file: ./training_result/training_c7_gamma1.0_ne200_file.txt
+average bounces per round 8.459
+stop training
+time spent:  93
+7 1.0 250
+not input file: ./training_result/training_c7_gamma1.0_ne250_file.txt
+average bounces per round 10.838
+stop training
+time spent:  91
+7 1.1 50
+not input file: ./training_result/training_c7_gamma1.1_ne50_file.txt
+average bounces per round 2.594
+stop training
+time spent:  110
+7 1.1 100
+not input file: ./training_result/training_c7_gamma1.1_ne100_file.txt
+average bounces per round 2.49
+stop training
+time spent:  85
+7 1.1 150
+not input file: ./training_result/training_c7_gamma1.1_ne150_file.txt
+average bounces per round 2.584
+stop training
+time spent:  76
+7 1.1 200
+not input file: ./training_result/training_c7_gamma1.1_ne200_file.txt
+average bounces per round 3.078
+stop training
+time spent:  73
+7 1.1 250
+not input file: ./training_result/training_c7_gamma1.1_ne250_file.txt
+average bounces per round 2.926
+stop training
+time spent:  71
+10 0.7 50
+not input file: ./training_result/training_c10_gamma0.7_ne50_file.txt
+average bounces per round 13.149
+stop training
+time spent:  347
+10 0.7 100
+not input file: ./training_result/training_c10_gamma0.7_ne100_file.txt
+average bounces per round 12.151
+stop training
+time spent:  190
+10 0.7 150
+not input file: ./training_result/training_c10_gamma0.7_ne150_file.txt
+average bounces per round 10.476
+stop training
+time spent:  105
+10 0.7 200
+not input file: ./training_result/training_c10_gamma0.7_ne200_file.txt
+average bounces per round 11.254
+stop training
+time spent:  92
+10 0.7 250
+not input file: ./training_result/training_c10_gamma0.7_ne250_file.txt
+average bounces per round 11.158
+stop training
+time spent:  84
+10 0.8 50
+not input file: ./training_result/training_c10_gamma0.8_ne50_file.txt
+average bounces per round 13.176
+stop training
+time spent:  358
+10 0.8 100
+not input file: ./training_result/training_c10_gamma0.8_ne100_file.txt
+average bounces per round 13.551
+stop training
+time spent:  206
+10 0.8 150
+not input file: ./training_result/training_c10_gamma0.8_ne150_file.txt
+average bounces per round 12.101
+stop training
+time spent:  113
+10 0.8 200
+not input file: ./training_result/training_c10_gamma0.8_ne200_file.txt
+average bounces per round 11.488
+stop training
+time spent:  94
+10 0.8 250
+not input file: ./training_result/training_c10_gamma0.8_ne250_file.txt
+average bounces per round 11.103
+stop training
+time spent:  85
+10 0.9 50
+not input file: ./training_result/training_c10_gamma0.9_ne50_file.txt
+average bounces per round 11.503
+stop training
+time spent:  312
+10 0.9 100
+not input file: ./training_result/training_c10_gamma0.9_ne100_file.txt
+average bounces per round 16.482
+stop training
+time spent:  232
+10 0.9 150
+not input file: ./training_result/training_c10_gamma0.9_ne150_file.txt
+average bounces per round 11.092
+stop training
+time spent:  110
+10 0.9 200
+not input file: ./training_result/training_c10_gamma0.9_ne200_file.txt
+average bounces per round 13.517
+stop training
+time spent:  98
+10 0.9 250
+not input file: ./training_result/training_c10_gamma0.9_ne250_file.txt
+average bounces per round 13.376
+stop training
+time spent:  86
+10 1.0 50
+not input file: ./training_result/training_c10_gamma1.0_ne50_file.txt
