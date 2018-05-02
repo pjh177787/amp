@@ -143,6 +143,7 @@ class Cloning:
     def minibatch(self, data, epoch, batch_size, feature_size, test):
         n, d = np.shape(data)
         weights, biases = self.init_wb(d-1, feature_size)
+        loss_list = []
         for e in range(epoch):
             np.random.shuffle(data)
             num_batch = int(n / batch_size)
@@ -152,13 +153,16 @@ class Cloning:
                 loss, weights, biases = self.three_layer_network(X, weights, biases, y, test)
                 total_loss += loss
                 print('Epoch: %d, Batch: %d, Loss: %.5f' %(e, i, loss))
-            print('Total Loss: %.5f' %(total_loss))
-        return weights, biases
+            print('Total Loss: %.5f' %(total_loss/num_batch))
+            loss_list.append(total_loss/num_batch)
+        loss_list = np.array(loss_list)
+        return weights, biases, loss_list
 
     
     def train(self):
-        self.weights, self.biases = self.minibatch(self.expert_policy, 100, 250, 256, False)
-        
+        self.weights, self.biases, loss_list = self.minibatch(self.expert_policy, 100, 100, 64, False)
+        return loss_list
+
     def test(self):
         classifications = self.three_layer_network(self.expert_policy, self.weights, self.biases, self.expert_actions, True)
 
